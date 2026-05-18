@@ -7,7 +7,7 @@ public class TaskMasterResponseDTO {
     private Long id;
     private String titulo;
     private String descricao;
-    private String categoriaa;
+    private String categoria;
     private LocalDate dataLimite;
     private Integer prioridade;
 
@@ -36,11 +36,11 @@ public class TaskMasterResponseDTO {
     }
 
     public String getCategoriaa() {
-        return categoriaa;
+        return categoria;
     }
 
-    public void setCategoriaa(String categoriaa) {
-        this.categoriaa = categoriaa;
+    public void setCategoriaa(String categoria) {
+        this.categoria = categoria;
     }
 
     public LocalDate getDataLimite() {
