@@ -35,11 +35,11 @@ public class TaskMasterResponseDTO {
         this.descricao = descricao;
     }
 
-    public String getCategoriaa() {
+    public String getCategoria() {
         return categoria;
     }
 
-    public void setCategoriaa(String categoria) {
+    public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
 
