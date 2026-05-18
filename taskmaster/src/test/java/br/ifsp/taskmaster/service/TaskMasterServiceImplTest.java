@@ -3,7 +3,7 @@ package br.ifsp.taskmaster.service;
 import br.ifsp.taskmaster.domain.model.Task;
 import br.ifsp.taskmaster.dto.TaskMasterRequestDTO;
 import br.ifsp.taskmaster.dto.TaskMasterResponseDTO;
-import br.ifsp.taskmaster.exception.ResourceNotFoundException;
+import br.ifsp.taskmaster.exception.ApiException;
 import br.ifsp.taskmaster.repository.TaskMasterRepository;
 import br.ifsp.taskmaster.service.impl.TaskMasterServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -75,6 +75,18 @@ class TaskMasterServiceImplTest {
         verify(repository, times(1)).save(any(Task.class));
     }
 
+    @Test
+    @DisplayName("Deve lançar BusinessException ao criar tarefa com data limite no passado")
+    void deveLancarExcecaoAoCriarTarefaComDataNoPassado() {
+        // Arrange: data no passado
+        requestValido.setDataLimite(LocalDate.now().minusDays(1));
+
+        // Act & Assert
+        assertThatThrownBy(() -> service.create(requestValido))
+                .isInstanceOf(ApiException.class)
+                .hasMessageContaining("passado");
+    }
+
     // ==================== FIND ALL ====================
 
     @Test
@@ -117,7 +129,7 @@ class TaskMasterServiceImplTest {
 
         // Act & Assert: espera-se que a exceção seja lançada com mensagem adequada
         assertThatThrownBy(() -> service.findById(99L))
-                .isInstanceOf(ResourceNotFoundException.class)
+                .isInstanceOf(ApiException.class)
                 .hasMessageContaining("99");
     }
 
@@ -179,7 +191,7 @@ class TaskMasterServiceImplTest {
 
         // Act & Assert
         assertThatThrownBy(() -> service.update(99L, requestValido))
-                .isInstanceOf(ResourceNotFoundException.class)
+                .isInstanceOf(ApiException.class)
                 .hasMessageContaining("99");
     }
 
@@ -206,7 +218,7 @@ class TaskMasterServiceImplTest {
 
         // Act & Assert
         assertThatThrownBy(() -> service.delete(99L))
-                .isInstanceOf(ResourceNotFoundException.class)
+                .isInstanceOf(ApiException.class)
                 .hasMessageContaining("99");
 
         verify(repository, never()).deleteById(any());

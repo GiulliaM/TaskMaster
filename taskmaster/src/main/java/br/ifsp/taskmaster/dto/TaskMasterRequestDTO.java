@@ -13,7 +13,6 @@ public class TaskMasterRequestDTO {
     @NotBlank(message = "A categoria deve ser obrigatória")
     private String categoria;
     @NotNull(message = "A data limite deve ser obrigatória")
-    @FutureOrPresent(message = "A data limite não deve ser no passado")
     private LocalDate dataLimite;
     @NotNull(message = "A prioridade deve ser obrigatória")
     @Min(value = 1, message = "Prioridade mínima é 1")

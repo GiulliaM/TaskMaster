@@ -14,10 +14,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponseDTO> handleNotFound(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponseDTO(404, "Recurso não encontrado", ex.getMessage()));
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ErrorResponseDTO> handleApi(ApiException ex) {
+        String erro = ex.getStatus() == HttpStatus.NOT_FOUND
+                ? "Recurso não encontrado"
+                : "Regra de negócio violada";
+        return ResponseEntity.status(ex.getStatus())
+                .body(new ErrorResponseDTO(ex.getStatus().value(), erro, ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

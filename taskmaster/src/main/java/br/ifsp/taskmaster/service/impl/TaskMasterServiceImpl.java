@@ -3,12 +3,15 @@ package br.ifsp.taskmaster.service.impl;
 import br.ifsp.taskmaster.domain.model.Task;
 import br.ifsp.taskmaster.dto.TaskMasterRequestDTO;
 import br.ifsp.taskmaster.dto.TaskMasterResponseDTO;
-import br.ifsp.taskmaster.exception.ResourceNotFoundException;
+import br.ifsp.taskmaster.exception.ApiException;
 import br.ifsp.taskmaster.repository.TaskMasterRepository;
 import br.ifsp.taskmaster.service.TaskMasterService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 public class TaskMasterServiceImpl implements TaskMasterService {
@@ -21,6 +24,9 @@ public class TaskMasterServiceImpl implements TaskMasterService {
 
     @Override
     public TaskMasterResponseDTO create(TaskMasterRequestDTO dto) {
+        if (dto.getDataLimite().isBefore(LocalDate.now())) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "A data limite não pode ser no passado");
+        }
         Task task = toEntity(dto);
         return toResponse(repository.save(task));
     }
@@ -33,7 +39,7 @@ public class TaskMasterServiceImpl implements TaskMasterService {
     @Override
     public TaskMasterResponseDTO findById(Long id) {
         Task task = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task não encontrada com id: " + id));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Task não encontrada com id: " + id));
         return toResponse(task);
     }
 
@@ -44,8 +50,11 @@ public class TaskMasterServiceImpl implements TaskMasterService {
 
     @Override
     public TaskMasterResponseDTO update(Long id, TaskMasterRequestDTO dto) {
+        if (dto.getDataLimite().isBefore(LocalDate.now())) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "A data limite não pode ser no passado");
+        }
         Task task = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task não encontrada com id: " + id));
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Task não encontrada com id: " + id));
         task.setTitulo(dto.getTitulo());
         task.setDescricao(dto.getDescricao());
         task.setCategoria(dto.getCategoria());
@@ -57,7 +66,7 @@ public class TaskMasterServiceImpl implements TaskMasterService {
     @Override
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("Task não encontrada com id: " + id);
+            throw new ApiException(HttpStatus.NOT_FOUND, "Task não encontrada com id: " + id);
         }
         repository.deleteById(id);
     }
