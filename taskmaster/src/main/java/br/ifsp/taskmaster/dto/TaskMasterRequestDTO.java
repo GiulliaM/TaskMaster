@@ -10,7 +10,7 @@ public class TaskMasterRequestDTO {
     private String titulo;
     @NotBlank(message = "A descrição deve ser obrigatória")
     private String descricao;
-    @NotBlank(message = "O titulo deve ser obrigatório")
+    @NotBlank(message = "A categoria deve ser obrigatória")
     private String categoria;
     @NotNull(message = "A data limite deve ser obrigatória")
     @FutureOrPresent(message = "A data limite não deve ser no passado")
